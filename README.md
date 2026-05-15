@@ -1,21 +1,54 @@
-<<<<<<< HEAD
-# app
+# Krea 
 
-A new Flutter project.
+Krea es una app educativa hecha en Flutter enfocada en el aprendizaje básico de letras, sonidos y sílabas de forma interactiva.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+##  Qué hace la app
 
-A few resources to get you started if this is your first Flutter project:
+* Inicio de sesión y registro con Supabase
+* Módulos de aprendizaje: letras, sonidos y sílabas
+* Reproducción de audio al interactuar
+* Interfaz simple con estilo pastel
+* Animaciones ligeras para mejorar la experiencia
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
-# Krea
->>>>>>> d3cdb013cadecfa6ed5319df572efacd4ee1c15e
+##  Módulos
+
+* **Letras**: reconocimiento básico
+* **Sonidos**: audios interactivos por letra
+* **Sílabas**: práctica con MA, ME, MI, MO, MU
+
+---
+
+##  Usuarios
+
+Los usuarios se guardan en Supabase en la tabla `usuarios` con:
+
+* id (uuid)
+* nombre
+* email
+
+---
+
+##  Diseño
+
+* Estilo minimalista pastel
+* Tarjetas animadas
+* Interfaz sencilla pensada para niños
+
+---
+
+##  Estado
+
+Proyecto en desarrollo.
+
+Se planea agregar más módulos y ejercicios interactivos en el futuro.
+
+---
+
+##  Autor
+
+0ymmas
+
