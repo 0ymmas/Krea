@@ -48,7 +48,11 @@ Se planea agregar más módulos y ejercicios interactivos en el futuro.
 
 ---
 
-##  Autor
+##  Autores
 
-0ymmas
+Gutierrez Morales Mayte
+Montiel Rueda Francisco Ezequiel
+Ortega Robles Madeline Michelle
+Ontiveros Castillo Janneth Danairy
+Torres Peña Angeles America
 
