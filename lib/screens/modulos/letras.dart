@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
 
 class LetrasScreen extends StatelessWidget {
-  final AudioPlayer player = AudioPlayer();
+  LetrasScreen({super.key});
 
   final List<String> letras = [
     'a',
@@ -34,28 +33,22 @@ class LetrasScreen extends StatelessWidget {
     'z',
   ];
 
-  LetrasScreen({super.key});
-
-  void reproducir(String letra) {
-    player.play(AssetSource('audios/$letra.mp3'));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFC5D5FF),
+      backgroundColor: const Color(0xFFC5D5FF),
 
       appBar: AppBar(
-        title: Text('Letras'),
-        backgroundColor: Color(0xFFA1C1EB),
+        title: const Text('Letras'),
+        backgroundColor: const Color(0xFFA1C1EB),
         elevation: 0,
         centerTitle: true,
       ),
 
       body: GridView.builder(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
 
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           crossAxisSpacing: 15,
           mainAxisSpacing: 15,
@@ -67,49 +60,46 @@ class LetrasScreen extends StatelessWidget {
           String letra = letras[index];
 
           List<Color> colores = [
-            Color(0xFFBC93F6),
-            Color(0xFFFFF599),
-            Color(0xFF81DAB9),
-            Color(0xFF79A6E2),
+            const Color(0xFFBC93F6),
+            const Color(0xFFFFF599),
+            const Color(0xFF81DAB9),
+            const Color(0xFF79A6E2),
           ];
 
           Color colorCard = colores[index % colores.length];
 
-          return GestureDetector(
-            onTap: () {
-              reproducir(letra);
-            },
+          return Container(
+            decoration: BoxDecoration(
+              color: colorCard,
+              borderRadius: BorderRadius.circular(20),
 
-            child: Container(
-              decoration: BoxDecoration(
-                color: colorCard,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    offset: Offset(4, 4),
-                    blurRadius: 6,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  offset: const Offset(4, 4),
+                  blurRadius: 6,
+                ),
+              ],
+            ),
+
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+
+              children: [
+                Image.asset('assets/imagenes/$letra.png', height: 60),
+
+                const SizedBox(height: 10),
+
+                Text(
+                  letra.toUpperCase(),
+
+                  style: const TextStyle(
+                    color: Colors.black87,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
-              ),
-
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset('assets/imagenes/$letra.png', height: 60),
-
-                  SizedBox(height: 10),
-
-                  Text(
-                    letra.toUpperCase(),
-                    style: TextStyle(
-                      color: Colors.black87,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },

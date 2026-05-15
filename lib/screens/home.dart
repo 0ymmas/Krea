@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'modulos/sonidos.dart';
 import 'modulos/letras.dart';
+import 'modulos/silabas.dart';
 import 'cuenta.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -21,7 +22,7 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
 
             children: [
-              // BOTON PERFIL
+              // PERFIL
               Align(
                 alignment: Alignment.topRight,
 
@@ -43,28 +44,59 @@ class HomeScreen extends StatelessWidget {
 
               // LOGO
               Center(
-                child: Container(
-                  padding: const EdgeInsets.all(14),
+                child: TweenAnimationBuilder(
+                  tween: Tween(begin: 0.8, end: 1.0),
 
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFDDE6FF),
-                    borderRadius: BorderRadius.circular(25),
+                  duration: const Duration(milliseconds: 700),
+
+                  curve: Curves.easeOutBack,
+
+                  builder: (context, value, child) {
+                    return Transform.scale(scale: value, child: child);
+                  },
+
+                  child: Container(
+                    padding: const EdgeInsets.all(14),
+
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFDDE6FF),
+
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+
+                    child: Image.asset('assets/logo.png', height: 90),
                   ),
-
-                  child: Image.asset('assets/logo.png', height: 90),
                 ),
               ),
 
               const SizedBox(height: 25),
 
               // SALUDO
-              Text(
-                'Hola "$nombre" 👋',
+              TweenAnimationBuilder(
+                tween: Tween(begin: 0.0, end: 1.0),
 
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                duration: const Duration(milliseconds: 800),
+
+                builder: (context, value, child) {
+                  return Opacity(
+                    opacity: value,
+
+                    child: Transform.translate(
+                      offset: Offset(0, 20 * (1 - value)),
+
+                      child: child,
+                    ),
+                  );
+                },
+
+                child: Text(
+                  'Hola "$nombre" 👋',
+
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
                 ),
               ),
 
@@ -78,7 +110,8 @@ class HomeScreen extends StatelessWidget {
                   mainAxisSpacing: 18,
 
                   children: [
-                    moduloCuadrado(
+                    // LETRAS
+                    moduloAnimado(
                       context,
                       'Letras',
                       'assets/icon.png',
@@ -86,23 +119,26 @@ class HomeScreen extends StatelessWidget {
                       LetrasScreen(),
                     ),
 
-                    moduloCuadrado(
+                    // SONIDOS
+                    moduloAnimado(
                       context,
                       'Sonidos',
                       'assets/Sonidos.png',
                       const Color(0xFFFFE58F),
-                      Container(),
+                      const SonidosScreen(),
                     ),
 
-                    moduloCuadrado(
+                    // SILABAS
+                    moduloAnimado(
                       context,
                       'Silabas',
                       'assets/silabas.png',
                       const Color(0xFFE3B7FF),
-                      Container(),
+                      const SilabasScreen(),
                     ),
 
-                    moduloCuadrado(
+                    // PALABRAS
+                    moduloAnimado(
                       context,
                       'Palabras',
                       'assets/Palabras.png',
@@ -119,51 +155,66 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget moduloCuadrado(
+  Widget moduloAnimado(
     BuildContext context,
     String texto,
     String imagen,
     Color color,
     Widget pantalla,
   ) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => pantalla));
+    return TweenAnimationBuilder(
+      tween: Tween(begin: 0.9, end: 1.0),
+
+      duration: const Duration(milliseconds: 500),
+
+      curve: Curves.easeOutBack,
+
+      builder: (context, value, child) {
+        return Transform.scale(scale: value, child: child);
       },
 
-      child: Container(
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(24),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => pantalla));
+        },
 
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 8,
-              offset: Offset(0, 4),
-            ),
-          ],
-        ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
 
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          decoration: BoxDecoration(
+            color: color,
 
-          children: [
-            Image.asset(imagen, height: 55),
+            borderRadius: BorderRadius.circular(24),
 
-            const SizedBox(height: 10),
-
-            Text(
-              texto,
-
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-                letterSpacing: 1,
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 8,
+                offset: Offset(0, 4),
               ),
-            ),
-          ],
+            ],
+          ),
+
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+
+            children: [
+              Image.asset(imagen, height: 55),
+
+              const SizedBox(height: 10),
+
+              Text(
+                texto,
+
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                  letterSpacing: 1,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
