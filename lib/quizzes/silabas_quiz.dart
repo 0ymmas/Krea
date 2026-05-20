@@ -1,122 +1,68 @@
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class LetrasQuizScreen extends StatefulWidget {
-  const LetrasQuizScreen({super.key});
+class SilabasQuizScreen extends StatefulWidget {
+  const SilabasQuizScreen({super.key});
 
   @override
-  State<LetrasQuizScreen> createState() => _LetrasQuizScreenState();
+  State<SilabasQuizScreen> createState() => _SilabasQuizScreenState();
 }
 
-class _LetrasQuizScreenState extends State<LetrasQuizScreen> {
+class _SilabasQuizScreenState extends State<SilabasQuizScreen> {
+  final AudioPlayer player = AudioPlayer();
+
   int preguntaActual = 0;
   int correctas = 0;
 
   final List<Map<String, dynamic>> preguntas = [
     {
-      "pregunta": "¿Qué letra es? A",
-      "respuesta": "A",
-      "opciones": ["A", "B", "C"],
+      "silaba": "ma",
+      "respuesta": "MA",
+      "opciones": ["MA", "ME", "MI"],
     },
     {
-      "pregunta": "¿Qué letra es? B",
-      "respuesta": "B",
-      "opciones": ["B", "D", "P"],
+      "silaba": "me",
+      "respuesta": "ME",
+      "opciones": ["MO", "ME", "MU"],
     },
     {
-      "pregunta": "¿Qué letra es? C",
-      "respuesta": "C",
-      "opciones": ["C", "O", "G"],
+      "silaba": "mi",
+      "respuesta": "MI",
+      "opciones": ["MI", "MA", "MO"],
     },
     {
-      "pregunta": "¿Qué letra es? D",
-      "respuesta": "D",
-      "opciones": ["D", "B", "Q"],
+      "silaba": "mo",
+      "respuesta": "MO",
+      "opciones": ["MU", "MO", "ME"],
     },
     {
-      "pregunta": "¿Qué letra es? E",
-      "respuesta": "E",
-      "opciones": ["E", "F", "A"],
-    },
-    {
-      "pregunta": "¿Qué letra es? F",
-      "respuesta": "F",
-      "opciones": ["F", "T", "P"],
-    },
-    {
-      "pregunta": "¿Qué letra es? G",
-      "respuesta": "G",
-      "opciones": ["G", "C", "Q"],
-    },
-    {
-      "pregunta": "¿Qué letra es? H",
-      "respuesta": "H",
-      "opciones": ["H", "N", "M"],
-    },
-    {
-      "pregunta": "¿Qué letra es? I",
-      "respuesta": "I",
-      "opciones": ["I", "L", "J"],
-    },
-    {
-      "pregunta": "¿Qué letra es? J",
-      "respuesta": "J",
-      "opciones": ["J", "I", "Y"],
-    },
-    {
-      "pregunta": "¿Qué letra es? K",
-      "respuesta": "K",
-      "opciones": ["K", "X", "R"],
-    },
-    {
-      "pregunta": "¿Qué letra es? L",
-      "respuesta": "L",
-      "opciones": ["L", "I", "T"],
-    },
-    {
-      "pregunta": "¿Qué letra es? M",
-      "respuesta": "M",
-      "opciones": ["M", "N", "W"],
-    },
-    {
-      "pregunta": "¿Qué letra es? N",
-      "respuesta": "N",
-      "opciones": ["N", "M", "H"],
-    },
-    {
-      "pregunta": "¿Qué letra es? O",
-      "respuesta": "O",
-      "opciones": ["O", "Q", "C"],
-    },
-    {
-      "pregunta": "¿Qué letra es? P",
-      "respuesta": "P",
-      "opciones": ["P", "R", "B"],
-    },
-    {
-      "pregunta": "¿Qué letra es? Q",
-      "respuesta": "Q",
-      "opciones": ["Q", "O", "G"],
-    },
-    {
-      "pregunta": "¿Qué letra es? R",
-      "respuesta": "R",
-      "opciones": ["R", "P", "K"],
-    },
-    {
-      "pregunta": "¿Qué letra es? S",
-      "respuesta": "S",
-      "opciones": ["S", "Z", "X"],
-    },
-    {
-      "pregunta": "¿Qué letra es? T",
-      "respuesta": "T",
-      "opciones": ["T", "F", "L"],
+      "silaba": "mu",
+      "respuesta": "MU",
+      "opciones": ["MU", "MI", "MA"],
     },
   ];
 
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      reproducirSilaba();
+    });
+  }
+
+  Future<void> reproducirSilaba() async {
+    String silaba = preguntas[preguntaActual]["silaba"];
+
+    await player.stop();
+    await player.play(AssetSource('audios/silabas/$silaba.mp3'));
+  }
+
   void responder(String opcion) {
-    if (opcion == preguntas[preguntaActual]["respuesta"]) {
+    String correcta = preguntas[preguntaActual]["respuesta"];
+
+    if (opcion == correcta) {
       correctas++;
     }
 
@@ -124,43 +70,50 @@ class _LetrasQuizScreenState extends State<LetrasQuizScreen> {
       setState(() {
         preguntaActual++;
       });
+
+      Future.delayed(const Duration(milliseconds: 400), () {
+        reproducirSilaba();
+      });
     } else {
       mostrarResultado();
     }
   }
 
-  Future<void> mostrarResultado() async {
+  Future<void> guardarProgreso() async {
     final supabase = Supabase.instance.client;
     final user = supabase.auth.currentUser;
 
+    if (user == null) return;
+
     int porcentaje = ((correctas / preguntas.length) * 100).round();
 
-    if (user != null) {
-      final data = await supabase
+    final data = await supabase
+        .from('progreso')
+        .select('silabas')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+    int progresoActual = data?['silabas'] ?? 0;
+
+    if (porcentaje > progresoActual) {
+      await supabase
           .from('progreso')
-          .select('letras')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-      int progresoActual = data?['letras'] ?? 0;
-
-      // SOLO guarda si el nuevo porcentaje es mayor
-      if (porcentaje > progresoActual) {
-        await supabase
-            .from('progreso')
-            .update({
-              'letras': porcentaje,
-              'updated_at': DateTime.now().toIso8601String(),
-            })
-            .eq('user_id', user.id);
-      }
+          .update({'silabas': porcentaje})
+          .eq('user_id', user.id);
     }
+  }
+
+  Future<void> mostrarResultado() async {
+    await guardarProgreso();
+
+    int porcentaje = ((correctas / preguntas.length) * 100).round();
 
     if (!mounted) return;
 
     showDialog(
       context: context,
       barrierDismissible: false,
+
       builder: (_) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
 
@@ -184,7 +137,7 @@ class _LetrasQuizScreenState extends State<LetrasQuizScreen> {
             Text(
               "Tu puntuación fue de $porcentaje%",
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 18, color: Colors.black87),
+              style: const TextStyle(fontSize: 18),
             ),
           ],
         ),
@@ -223,6 +176,12 @@ class _LetrasQuizScreenState extends State<LetrasQuizScreen> {
   }
 
   @override
+  void dispose() {
+    player.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final pregunta = preguntas[preguntaActual];
 
@@ -230,7 +189,7 @@ class _LetrasQuizScreenState extends State<LetrasQuizScreen> {
       backgroundColor: const Color(0xFFC5D5FF),
 
       appBar: AppBar(
-        title: const Text("Quiz de Letras"),
+        title: const Text("Quiz de Sílabas"),
         backgroundColor: const Color(0xFFA1C1EB),
         elevation: 0,
         centerTitle: true,
@@ -244,21 +203,57 @@ class _LetrasQuizScreenState extends State<LetrasQuizScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
 
             children: [
-              Text(
-                pregunta["pregunta"],
+              const Text(
+                "¿Qué sílaba escuchas?",
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 30,
+                style: TextStyle(
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
               ),
 
-              const SizedBox(height: 14),
+              const SizedBox(height: 10),
 
               Text(
                 "Pregunta ${preguntaActual + 1} de ${preguntas.length}",
                 style: const TextStyle(fontSize: 15, color: Colors.black54),
+              ),
+
+              const SizedBox(height: 45),
+
+              GestureDetector(
+                onTap: reproducirSilaba,
+
+                child: Container(
+                  padding: const EdgeInsets.all(36),
+
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF81DAB9),
+                    shape: BoxShape.circle,
+
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+
+                  child: const Icon(
+                    Icons.volume_up_rounded,
+                    color: Colors.white,
+                    size: 70,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 18),
+
+              const Text(
+                "Toca para repetir la sílaba",
+                style: TextStyle(fontSize: 15, color: Colors.black54),
               ),
 
               const SizedBox(height: 45),
@@ -275,6 +270,7 @@ class _LetrasQuizScreenState extends State<LetrasQuizScreen> {
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black87,
                       elevation: 4,
+
                       padding: const EdgeInsets.symmetric(vertical: 18),
 
                       shape: RoundedRectangleBorder(

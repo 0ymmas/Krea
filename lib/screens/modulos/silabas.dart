@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import '../../quizzes/silabas_quiz.dart';
 
 class SilabasScreen extends StatefulWidget {
   const SilabasScreen({super.key});

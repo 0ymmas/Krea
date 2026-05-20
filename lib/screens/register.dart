@@ -38,7 +38,7 @@ class RegisterScreen extends StatelessWidget {
     }
 
     try {
-      // 1. Crear usuario en Auth
+      // Crear usuario en Auth
       final response = await supabase.auth.signUp(
         email: email,
         password: password,
@@ -55,14 +55,14 @@ class RegisterScreen extends StatelessWidget {
 
       final userId = user.id;
 
-      // 2. Insertar en tabla usuarios
+      // Insertar en tabla usuarios
       await supabase.from('usuarios').insert({
         'id': userId,
         'nombre': nombre,
         'email': email,
       });
 
-      // 3. Crear registro inicial en progreso
+      // Crear registro inicial en progreso
       await supabase.from('progreso').insert({
         'user_id': userId,
         'letras': 0,
@@ -70,7 +70,7 @@ class RegisterScreen extends StatelessWidget {
         'silabas': 0,
       });
 
-      // 4. Feedback y regreso
+      // Feedback y regreso
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Cuenta creada correctamente ✨')),

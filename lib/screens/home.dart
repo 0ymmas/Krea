@@ -4,7 +4,7 @@ import 'modulos/letras.dart';
 import 'modulos/silabas.dart';
 import 'modulos/palabras.dart';
 import 'cuenta.dart';
-import '../progreso.dart';
+import '../panel_padres.dart';
 
 class HomeScreen extends StatelessWidget {
   final String nombre;
@@ -24,27 +24,59 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
 
             children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const CuentaScreen()),
-                    );
-                  },
-                  icon: const Icon(
-                    Icons.person_rounded,
-                    size: 32,
-                    color: Colors.black87,
+              // PANEL PADRES + PERFIL
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  // PANEL PADRES
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PanelPadresScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.family_restroom,
+                      size: 30,
+                      color: Colors.black87,
+                    ),
                   ),
+
+                  // PERFIL
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const CuentaScreen()),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.person_rounded,
+                      size: 32,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+
+              // LOGO
+              Center(
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFDDE6FF),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  child: Image.asset('assets/logo.png', height: 90),
                 ),
               ),
 
-              Center(child: Image.asset('assets/logo.png', height: 90)),
-
               const SizedBox(height: 25),
 
+              // SALUDO
               Text(
                 'Hola "$nombre" 👋',
                 style: const TextStyle(
@@ -54,37 +86,9 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 15),
+              const SizedBox(height: 25),
 
-              // 🔥 BOTÓN DE PROGRESO
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const ProgresoScreen()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFD6C0E9),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text(
-                  "Ver mi progreso",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
+              // MODULOS
               Expanded(
                 child: GridView.count(
                   crossAxisCount: 2,
@@ -116,7 +120,6 @@ class HomeScreen extends StatelessWidget {
                       const SilabasScreen(),
                     ),
 
-                    // 🔥 NUEVO MÓDULO PALABRAS
                     moduloAnimado(
                       context,
                       'Palabras',

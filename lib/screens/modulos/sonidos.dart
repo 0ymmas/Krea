@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:krea/quizzes/sonidos_quiz.dart';
 
 class SonidosScreen extends StatefulWidget {
   const SonidosScreen({super.key});
@@ -52,9 +53,17 @@ class _SonidosScreenState extends State<SonidosScreen> {
 
     await Future.delayed(const Duration(milliseconds: 250));
 
-    setState(() {
-      letraActiva = null;
-    });
+    if (mounted) {
+      setState(() {
+        letraActiva = null;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    player.dispose();
+    super.dispose();
   }
 
   @override
@@ -69,113 +78,161 @@ class _SonidosScreenState extends State<SonidosScreen> {
         centerTitle: true,
       ),
 
-      body: GridView.builder(
-        padding: const EdgeInsets.all(20),
+      body: Column(
+        children: [
+          const SizedBox(height: 15),
 
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 15,
-          mainAxisSpacing: 15,
+          // BOTÓN QUIZ
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
 
-          // MÁS ALTURA PARA EVITAR OVERFLOW
-          childAspectRatio: 0.75,
-        ),
+            child: SizedBox(
+              width: double.infinity,
 
-        itemCount: letras.length,
-
-        itemBuilder: (context, index) {
-          String letra = letras[index];
-
-          List<Color> colores = [
-            const Color(0xFFBC93F6),
-            const Color(0xFFFFF599),
-            const Color(0xFF81DAB9),
-            const Color(0xFF79A6E2),
-          ];
-
-          Color colorCard = colores[index % colores.length];
-
-          bool activa = letraActiva == index;
-
-          return GestureDetector(
-            onTap: () {
-              reproducir(letra, index);
-            },
-
-            child: AnimatedScale(
-              scale: activa ? 0.92 : 1,
-
-              duration: const Duration(milliseconds: 150),
-
-              curve: Curves.easeOut,
-
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-
-                decoration: BoxDecoration(
-                  color: activa ? Colors.white : colorCard,
-
-                  borderRadius: BorderRadius.circular(20),
-
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      offset: const Offset(4, 4),
-                      blurRadius: activa ? 12 : 6,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const SonidosQuizScreen(),
                     ),
-                  ],
+                  );
+                },
+
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFBC93F6),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
                 ),
 
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
+                icon: const Icon(Icons.quiz_rounded, color: Colors.black87),
 
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-
-                    children: [
-                      AnimatedScale(
-                        scale: activa ? 1.12 : 1,
-
-                        duration: const Duration(milliseconds: 180),
-
-                        child: Image.asset(
-                          'assets/imagenes/$letra.png',
-                          height: 50,
-                        ),
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      Text(
-                        letra.toUpperCase(),
-
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      const SizedBox(height: 4),
-
-                      AnimatedScale(
-                        scale: activa ? 1.2 : 1,
-
-                        duration: const Duration(milliseconds: 150),
-
-                        child: const Icon(
-                          Icons.volume_up,
-                          size: 24,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
+                label: const Text(
+                  "Ir al Quiz de Sonidos",
+                  style: TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
               ),
             ),
-          );
-        },
+          ),
+
+          const SizedBox(height: 10),
+
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.all(20),
+
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 15,
+                mainAxisSpacing: 15,
+                childAspectRatio: 0.75,
+              ),
+
+              itemCount: letras.length,
+
+              itemBuilder: (context, index) {
+                String letra = letras[index];
+
+                List<Color> colores = [
+                  const Color(0xFFBC93F6),
+                  const Color(0xFFFFF599),
+                  const Color(0xFF81DAB9),
+                  const Color(0xFF79A6E2),
+                ];
+
+                Color colorCard = colores[index % colores.length];
+
+                bool activa = letraActiva == index;
+
+                return GestureDetector(
+                  onTap: () {
+                    reproducir(letra, index);
+                  },
+
+                  child: AnimatedScale(
+                    scale: activa ? 0.92 : 1,
+
+                    duration: const Duration(milliseconds: 150),
+
+                    curve: Curves.easeOut,
+
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+
+                      decoration: BoxDecoration(
+                        color: activa ? Colors.white : colorCard,
+
+                        borderRadius: BorderRadius.circular(20),
+
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            offset: const Offset(4, 4),
+                            blurRadius: activa ? 12 : 6,
+                          ),
+                        ],
+                      ),
+
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+
+                          children: [
+                            AnimatedScale(
+                              scale: activa ? 1.12 : 1,
+
+                              duration: const Duration(milliseconds: 180),
+
+                              child: Image.asset(
+                                'assets/imagenes/$letra.png',
+                                height: 50,
+                              ),
+                            ),
+
+                            const SizedBox(height: 8),
+
+                            Text(
+                              letra.toUpperCase(),
+
+                              style: const TextStyle(
+                                color: Colors.black87,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                            const SizedBox(height: 4),
+
+                            AnimatedScale(
+                              scale: activa ? 1.2 : 1,
+
+                              duration: const Duration(milliseconds: 150),
+
+                              child: const Icon(
+                                Icons.volume_up_rounded,
+                                size: 24,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
